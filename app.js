@@ -1,60 +1,50 @@
 const express = require('express')
 const app = express();
-const usuario = [
-    {
-        id: 1,
-        nome: "Nero",
-        email: "nero@gmail.com",
-        senha: "1012"
-    },
-    {
-        id: 2,
-        nome: "Silva",
-        email: "silva@gmail.com",
-        senha: "1012"
-    },
-    {
-        id: 3,
-        nome: "Cauê",
-        email: "cauê@gmail.com",
-        senha: "1012"
-    },
-    {
-        id: 4,
-        nome: "Carlos",
-        email: "carlos@gmail.com",
-        senha: "1012"
-    },
-]
-app.get("/", (req, res, next) => {
-    res.json(usuario)
-})
+app.use(express.json());
+const cors = require("cors")
+app.use(cors());
+const morgan = require("morgan");
+app.use(morgan("dev"));
 
-app.get("/usuario", (req, res, next) => {
-    let nomes = [];
-    usuario.map((linha) => {
-        nomes.push({
-            nome: linha.nome,
-            email: linha.email
 
-        })
-    })
+const routaUsuarios = require("./routes/rotaUsuario");
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }))
 
-    res.json(nomes)
 
-})
-app.post("/usuario", (req, res, next) => {
-    const id = req.body.id
-    const nome = req.body.nome;
-    const email = req.body.email;
-    const senha = req.body.senha;
-    const dados = [{
-        id,
-        nome,
-        email,
-        senha
-    }]
-    console.table(dados);
+app.use((req,res,next)=>{
+    res.header("Access-Control-Allow-Origin","*");
+
+    res.header(
+        "Access-Control-Allow-Headers","Origin,X-Requested-With,Content-Type, Accept,Autorization"
+    )
+    if(req.method === "OPTIONS"){
+        res.header("Access-Control_Allow-Methods","PUTT, POST, PATCH, DELETE, GET");
+        return res.status(200).setDefaultEncoding({})
+    }
+    next();
+
+});
+
+
+app.use("/usuario", routaUsuarios);
+
+
+
+app.use((req, res, next) => {
+    const erro = new console.error("Não encontrado!");
+    erro.status(404);
+
+});
+
+app.use((error, req, res, next) => {
+
+    res.status(error.status || 500);
+    return res.json({
+        erro: {
+            mensagem: error.message
+        }
+    });
 
 });
 

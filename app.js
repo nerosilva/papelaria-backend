@@ -9,7 +9,7 @@ app.use(morgan("dev"));
 
 const routaUsuarios = require("./routes/rotaUsuario");
 const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 
 
 app.use((req,res,next)=>{
@@ -17,10 +17,11 @@ app.use((req,res,next)=>{
 
     res.header(
         "Access-Control-Allow-Headers","Origin,X-Requested-With,Content-Type, Accept,Autorization"
-    )
+    );
+
     if(req.method === "OPTIONS"){
         res.header("Access-Control_Allow-Methods","PUTT, POST, PATCH, DELETE, GET");
-        return res.status(200).setDefaultEncoding({})
+        return res.status(200).setDefaultEncoding({});
     }
     next();
 
